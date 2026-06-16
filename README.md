@@ -51,9 +51,34 @@ EmployeeManagementSystem/
 
 ## Setup & Run
 
+### Prerequisites
+Make sure these are installed on your machine:
+- [Java 17+](https://www.oracle.com/java/technologies/downloads/)
+- [Maven 3.6+](https://maven.apache.org/download.cgi)
+- [MySQL 8.0+](https://dev.mysql.com/downloads/installer/)
+- [Git](https://git-scm.com)
+
+---
+
+### Option 1 — Auto Setup (Windows)
+
+1. Download and run `setup.bat` — it does everything automatically:
+   - Clones the repo
+   - Builds the project
+   - Creates the database
+   - Starts the server and opens the browser
+
+```bash
+curl -O https://raw.githubusercontent.com/Himanshunain224/EmployeeManagementSystem/main/setup.bat && setup.bat
+```
+
+---
+
+### Option 2 — Manual Setup
+
 **1. Clone the repository**
 ```bash
-git clone https://github.com/YOUR_USERNAME/EmployeeManagementSystem.git
+git clone https://github.com/Himanshunain224/EmployeeManagementSystem.git
 cd EmployeeManagementSystem
 ```
 
@@ -73,7 +98,7 @@ private static final String PASSWORD = "your_password_here";
 
 **4. Build the project**
 ```bash
-mvn clean package
+mvn clean package -DskipTests
 ```
 
 **5. Run the server**
