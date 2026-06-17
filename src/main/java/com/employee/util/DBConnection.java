@@ -15,17 +15,33 @@ public class DBConnection {
             String password = System.getenv("DB_PASSWORD");
 
             if (url == null) {
+                // Local
                 url = "jdbc:mysql://localhost:3306/employee_db?useSSL=false&allowPublicKeyRetrieval=true";
                 user = "root";
                 password = "root123";
             } else {
-                // Railway URL may need extra params
+                // Railway — convert mysql:// to jdbc:mysql://
+                if (url.startsWith("mysql://")) {
+                    url = "jdbc:mysql://" + url.substring(8);
+                }
                 if (!url.contains("?")) {
                     url = url + "?useSSL=false&allowPublicKeyRetrieval=true";
                 }
+                // Extract user and password from URL if not set separately
+                if (user == null || password == null) {
+                    // Parse from URL: mysql://user:password@host:port/db
+                    String withoutScheme = url.replace("jdbc:mysql://", "");
+                    if (withoutScheme.contains("@")) {
+                        String credentials = withoutScheme.substring(0, withoutScheme.indexOf("@"));
+                        user = credentials.split(":")[0];
+                        password = credentials.split(":")[1];
+                        String hostPart = withoutScheme.substring(withoutScheme.indexOf("@") + 1);
+                        url = "jdbc:mysql://" + hostPart;
+                    }
+                }
             }
 
-            System.out.println("Connecting to: " + url);
+            System.out.println("Connecting to DB...");
             Connection conn = DriverManager.getConnection(url, user, password);
             System.out.println("Database connected successfully!");
             return conn;
