@@ -8,29 +8,31 @@ public class DBConnection {
 
     public static Connection getConnection() {
         try {
-            // Try Railway environment variables first
-            String host = System.getenv("MYSQLHOST");
-            String port = System.getenv("MYSQLPORT");
-            String database = System.getenv("MYSQLDATABASE");
-            String user = System.getenv("MYSQLUSER");
-            String password = System.getenv("MYSQLPASSWORD");
+            Class.forName("com.mysql.cj.jdbc.Driver");
 
-            String url;
+            String url = System.getenv("DB_URL");
+            String user = System.getenv("DB_USER");
+            String password = System.getenv("DB_PASSWORD");
 
-            if (host != null) {
-                // Running on Railway
-                url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false&allowPublicKeyRetrieval=true";
-            } else {
-                // Running locally
-                url = "jdbc:mysql://localhost:3306/employee_db?useSSL=false";
+            if (url == null) {
+                url = "jdbc:mysql://localhost:3306/employee_db?useSSL=false&allowPublicKeyRetrieval=true";
                 user = "root";
                 password = "root123";
+            } else {
+                // Railway URL may need extra params
+                if (!url.contains("?")) {
+                    url = url + "?useSSL=false&allowPublicKeyRetrieval=true";
+                }
             }
 
+            System.out.println("Connecting to: " + url);
             Connection conn = DriverManager.getConnection(url, user, password);
             System.out.println("Database connected successfully!");
             return conn;
 
+        } catch (ClassNotFoundException e) {
+            System.out.println("Driver not found: " + e.getMessage());
+            return null;
         } catch (SQLException e) {
             System.out.println("Connection failed: " + e.getMessage());
             return null;
